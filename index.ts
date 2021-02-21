@@ -119,3 +119,29 @@ class DragBox {
         this.state.startUpdating(cb)
     }
 }
+
+class Stage {
+
+    canvas : HTMLCanvasElement = document.createElement('canvas')
+    context : CanvasRenderingContext2D 
+    mouseController : MouseController = new MouseController()
+
+
+    initCanvas() {
+        this.canvas.width = w 
+        this.canvas.height = h 
+        this.context = this.canvas.getContext('2d')
+        document.body.appendChild(this.canvas)
+        this.mouseController.handleMouse(this.canvas, () => {
+
+        })
+    }
+
+    render() {
+        this.context.fillStyle = backColor 
+        this.context.fillRect(0, 0, w, h)
+        this.mouseController.setCoords((x : number, y : number, x1 : number, y1 : number) => {
+            
+        })
+    }
+}
