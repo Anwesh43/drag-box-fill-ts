@@ -125,7 +125,7 @@ class Stage {
     canvas : HTMLCanvasElement = document.createElement('canvas')
     context : CanvasRenderingContext2D 
     mouseController : MouseController = new MouseController()
-
+    renderer : Renderer = new Renderer()
 
     initCanvas() {
         this.canvas.width = w 
@@ -133,15 +133,54 @@ class Stage {
         this.context = this.canvas.getContext('2d')
         document.body.appendChild(this.canvas)
         this.mouseController.handleMouse(this.canvas, () => {
-
+            this.renderer.addDragBox(() => {
+                this.render()
+            })
         })
     }
 
     render() {
         this.context.fillStyle = backColor 
         this.context.fillRect(0, 0, w, h)
+        this.renderer.render(this.context)
         this.mouseController.setCoords((x : number, y : number, x1 : number, y1 : number) => {
-            
+            this.renderer.setCurrCoord(x, y, x1, y1)
         })
     }
+}
+
+class Renderer {
+
+    curr : DragBox = new DragBox()
+    boxes : Array<DragBox> = []
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.curr.draw(context)
+        this.boxes.forEach((box : DragBox) => {
+            box.draw(context)
+        })
+    }
+
+    addDragBox(cb : Function) {
+        this.curr.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.curr.update(() => {
+                    this.animator.stop()
+                    this.boxes.push(this.curr)
+                    this.curr = new DragBox()
+                    cb()
+                })
+            })
+        })
+    }
+
+    setCurrCoord(x : number, y : number, x1 : number, y1 : number) {
+        this.curr.x = x 
+        this.curr.y = y 
+        this.curr.x1 = x1 
+        this.curr.y1 = y1 
+    }
+
 }
