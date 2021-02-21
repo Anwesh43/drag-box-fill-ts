@@ -56,7 +56,7 @@ class MouseController {
     x1 : number 
     y1 : number  
 
-    handleMouse(canvas : HTMLCanvasElement, cb : Function) {
+    handleMouse(canvas : HTMLCanvasElement, cb : Function, renderCb : Function) {
         canvas.onmousedown = (e : MouseEvent) => {
             if (!this.isDown) {
                 this.isDown = true 
@@ -64,13 +64,15 @@ class MouseController {
                 this.y = e.offsetY  
                 this.x1 = this.x 
                 this.y1 = this.y 
+                renderCb()
             }
         }
         
         canvas.onmousemove = (e : MouseEvent) => {
-            if (this.isDown && e.offsetX > this.x && e.offsetY > this.y) {
+            if (this.isDown && e.offsetX >= this.x && e.offsetY >= this.y) {
                 this.x1 = e.offsetX 
                 this.y1 = e.offsetY 
+                renderCb()
             }
         } 
 
@@ -136,6 +138,8 @@ class Stage {
             this.renderer.addDragBox(() => {
                 this.render()
             })
+        }, () => {
+            this.render()
         })
     }
 
