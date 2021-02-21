@@ -47,3 +47,41 @@ class Animator {
         }
     }
 }
+
+class MouseController {
+
+    isDown : boolean = false
+    x : number
+    y : number 
+    x1 : number 
+    y1 : number  
+
+    handleMouse(canvas : HTMLCanvasElement) {
+        canvas.onmousedown = (e : MouseEvent) => {
+            if (!this.isDown) {
+                this.isDown = true 
+                this.x = e.offsetX 
+                this.y = e.offsetY  
+            }
+        }
+        
+        canvas.onmousemove = (e : MouseEvent) => {
+            if (this.isDown) {
+                this.x1 = e.offsetX 
+                this.y1 = e.offsetY 
+            }
+        } 
+
+        canvas.onmouseup = (e : MouseEvent) => {
+            if (this.isDown) {
+                this.isDown = false 
+            }
+        }
+    }
+
+    setCoords(cb : Function) {
+        if (this.isDown) {
+            cb(this.x, this.y, this.x1, this.y1)
+        }
+    } 
+}
