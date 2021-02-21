@@ -147,6 +147,12 @@ class Stage {
             this.renderer.setCurrCoord(x, y, x1, y1)
         })
     }
+
+    static init() {
+        const stage : Stage = new Stage()
+        stage.initCanvas()
+        stage.render()
+    }
 }
 
 class Renderer {
