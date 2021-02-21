@@ -56,17 +56,19 @@ class MouseController {
     x1 : number 
     y1 : number  
 
-    handleMouse(canvas : HTMLCanvasElement) {
+    handleMouse(canvas : HTMLCanvasElement, cb : Function) {
         canvas.onmousedown = (e : MouseEvent) => {
             if (!this.isDown) {
                 this.isDown = true 
                 this.x = e.offsetX 
                 this.y = e.offsetY  
+                this.x1 = this.x 
+                this.y1 = this.y 
             }
         }
         
         canvas.onmousemove = (e : MouseEvent) => {
-            if (this.isDown) {
+            if (this.isDown && e.offsetX > this.x && e.offsetY > this.y) {
                 this.x1 = e.offsetX 
                 this.y1 = e.offsetY 
             }
@@ -75,6 +77,7 @@ class MouseController {
         canvas.onmouseup = (e : MouseEvent) => {
             if (this.isDown) {
                 this.isDown = false 
+                cb()
             }
         }
     }
@@ -84,4 +87,35 @@ class MouseController {
             cb(this.x, this.y, this.x1, this.y1)
         }
     } 
+}
+
+class DragBox {
+
+    state : State = new State()
+    x : number 
+    y : number 
+    x1 : number 
+    y1 : number 
+
+    draw(context : CanvasRenderingContext2D) {
+        context.strokeStyle = color
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / strokeFactor  
+        context.strokeRect(this.x, this.y, this.x1 - this.x, this.y1 - this.y)
+        context.fillStyle = color 
+        context.fillRect(
+            this.x,
+            this.y1 - (this.y1 - this.y) * this.state.scale,
+            this.x1 - this.x,
+            (this.y1 - this.y) * this.state.scale
+        )
+    }
+
+    update(cb : Function) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb : Function) {
+        this.state.startUpdating(cb)
+    }
 }
